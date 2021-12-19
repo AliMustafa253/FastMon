@@ -1,10 +1,18 @@
 pragma solidity >=0.6.0;
 
+/*==================================================================
+Contains
+-Setting Players
+-Setting Variables
+-Initialization
+Functionality 
+==================================================================*/
+
 contract initializeGame {
     //--------------------Variables----------------------
 
     //totalPlayer increments only when new players added
-    uint256 public totalPlayers = 0;
+    uint16 public totalPlayers = 0;
     uint256 public nonceForRand = 0;
     bool public startGame = false;
 
@@ -19,6 +27,7 @@ contract initializeGame {
         uint16 balance;
         uint16 round; //Makes sure everyone is on the same round
         uint16 cardsOwned;
+        uint16 playerNumber;
         address playerAddr;
     }
 
@@ -60,13 +69,20 @@ contract initializeGame {
 
     function createPlayer() public {
         require(startGame == false);
-        ownerToPlayer[msg.sender] = Player(100, 1, 0, address(msg.sender));
+        require(ownerToPlayer[msg.sender].playerAddr == address(0));
+        totalPlayers += 1; //Increments total players
+
+        ownerToPlayer[msg.sender] = Player(
+            100,
+            1,
+            0,
+            totalPlayers,
+            address(msg.sender)
+        );
         //create 3 cards for the user to start with
         for (uint256 i = 0; i < 3; i++) {
             addCard();
         }
-
-        totalPlayers += 1; //Increments total players
     }
 
     //ADDS CARD TO LIST
