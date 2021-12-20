@@ -30,31 +30,6 @@ contract tradeGame is roundsGame {
 
     //--------------------Functions----------------------
 
-    //MAKE SURE TO DOUBLE CHECK THAT ALL THE TOKENS CARDS ETC TRANSFERS ARE DONE CORRECTLY
-
-    function startTrade(uint16 _ownerOffer, uint16 _ownerCard) public {
-        require(ownerToPlayer[msg.sender].balance >= _ownerOffer);
-        require(ownerToTrade[msg.sender].ownerAddr != msg.sender); //Make sure owner doesnt have a trade alrdy
-        uint16 currentIndex = uint16(trades.length - 1);
-        ownerToTrade[msg.sender] = tradeCard(
-            _ownerOffer,
-            _ownerCard,
-            0,
-            0,
-            currentIndex,
-            false,
-            true,
-            msg.sender,
-            address(0)
-        );
-        ownerToPlayer[msg.sender].cardsOwned -= 1;
-        trades.push(ownerToTrade[msg.sender]);
-        cardToOwner[_ownerCard] = address(0);
-        //reduce the tokens the owner offers for trade
-        ownerToPlayer[msg.sender].balance -= _ownerOffer;
-        currentTrades += 1;
-    }
-
     //Return trades of specified address
 
     function retTradeAddr(address _ownerAddr)
@@ -85,6 +60,36 @@ contract tradeGame is roundsGame {
         revert();
     }
 
+    //MAKE SURE TO DOUBLE CHECK THAT ALL THE TOKENS CARDS ETC TRANSFERS ARE DONE CORRECTLY
+
+    function startTrade(uint16 _ownerOffer, uint16 _ownerCard)
+        public
+        gameStarted
+    {
+        require(ownerToPlayer[msg.sender].balance >= _ownerOffer);
+        require(ownerToTrade[msg.sender].ownerAddr != msg.sender); //Make sure owner doesnt have a trade alrdy
+        require(cardToOwner[_ownerCard] == msg.sender);
+
+        uint16 currentIndex = uint16(trades.length);
+        ownerToTrade[msg.sender] = tradeCard(
+            _ownerOffer,
+            _ownerCard,
+            0,
+            0,
+            currentIndex,
+            false,
+            true,
+            msg.sender,
+            address(0)
+        );
+        ownerToPlayer[msg.sender].cardsOwned -= 1;
+        trades.push(ownerToTrade[msg.sender]);
+        cardToOwner[_ownerCard] = address(0);
+        //reduce the tokens the owner offers for trade
+        ownerToPlayer[msg.sender].balance -= _ownerOffer;
+        currentTrades += 1;
+    }
+
     //The offer (tokens + cards) a buyer makes will be subtracted until the trade is cancelled or confirmed
 
     function offerTrade(
@@ -92,12 +97,13 @@ contract tradeGame is roundsGame {
         uint16 _buyerCard,
         uint256 index
     ) public {
-        address _ownerAddr = trades[index].ownerAddr;
+        address _ownerAddr = address(trades[index].ownerAddr);
         require(ownerToPlayer[msg.sender].balance >= _buyerOffer);
         //to make sure no more trades available to the player
         require(ownerToTrade[_ownerAddr].tradeAvailable);
         require(_buyerOffer >= 0);
         require(_ownerAddr != msg.sender);
+        require(cardToOwner[_buyerCard] == msg.sender);
 
         ownerToTrade[_ownerAddr].buyerOffer = _buyerOffer;
         ownerToTrade[_ownerAddr].buyerCard = _buyerCard;
@@ -111,6 +117,7 @@ contract tradeGame is roundsGame {
     }
 
     //Player can use this to hold enemy tokens but in term they cant trade either until they confirm this
+    //TRY TO MAKE THIS MORE EFFICIENT IN NEXT ITERATIONS
 
     function tradeComplete(bool _tradeConfirm) public {
         require(msg.sender == ownerToTrade[msg.sender].ownerAddr);
@@ -142,14 +149,18 @@ contract tradeGame is roundsGame {
             //Add card numbers in owner
             ownerToPlayer[msg.sender].cardsOwned += 1;
 
+            ownerToTrade[msg.sender].ownerOffer = 0;
+            ownerToTrade[msg.sender].ownerCard = 0;
+            ownerToTrade[msg.sender].ownerAddr = address(0);
+            ownerToTrade[msg.sender].tradeAvailable = false;
+
             ownerToTrade[msg.sender].buyerOffer = 0;
             ownerToTrade[msg.sender].buyerCard = 0;
             ownerToTrade[msg.sender].buyerAddr = address(0);
-            ownerToTrade[msg.sender].tradeAvailable = true;
 
             tradeCard memory tempTrade = trades[trades.length - 1];
             delete trades[trades.length - 1];
-            trades[retTradeIndex()] = tempTrade;
+            // trades[retTradeIndex()] = tempTrade;
             currentTrades -= 1;
         }
     }
