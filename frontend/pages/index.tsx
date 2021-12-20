@@ -18,6 +18,9 @@ import $ from 'jquery';
 import styles from "../styles/index.module.scss"
 
 
+// let's try using a Contract...
+import useProjectGameContract from "../hooks/useProjectGameContract"
+
 function Home() {
   const router = useRouter();
 
@@ -27,65 +30,14 @@ function Home() {
 
   const isConnected = typeof account === "string" && !!library;
 
+  const testContract = useProjectGameContract();
+
+
   var x;
-  // var $cards = $(".card");
-  // var $style = $(".hover");
-  
-
-  const MouseMoveCard = (e) => {
-      var cardElement = e.target
-
-      // normalise touch/mouse
-      var pos = [e.offsetX,e.offsetY];
-      e.preventDefault();
-      if ( e.type === "touchmove" ) {
-        pos = [ e.touches[0].clientX, e.touches[0].clientY ];
-      }
-      var $card = $(cardElement);
-      // math for mouse position
-      var l = pos[0];
-      var t = pos[1];
-      var h = $card.height();
-      var w = $card.width();
-      var px = Math.abs(Math.floor(100 / w * l)-100);
-      var py = Math.abs(Math.floor(100 / h * t)-100);
-      var pa = (50-px)+(50-py);
-      // math for gradient / background positions
-      var lp = (50+(px - 50)/1.5);
-      var tp = (50+(py - 50)/1.5);
-      var px_spark = (50+(px - 50)/7);
-      var py_spark = (50+(py - 50)/7);
-      var p_opc = 20+(Math.abs(pa)*1.5);
-      var ty = ((tp - 50)/2) * -1;
-      var tx = ((lp - 50)/1.5) * .5;
-      // css to apply for active card
-      var grad_pos = `background-position: ${lp}% ${tp}%;`
-      var sprk_pos = `background-position: ${px_spark}% ${py_spark}%;`
-      var opc = `opacity: ${p_opc/100};`
-      var tf = `transform: rotateX(${ty}deg) rotateY(${tx}deg)`
-      
-      cardElement.hover.before["background-position"] = `${lp}% ${tp}%;`
-
-      
-      // need to use a <style> tag for psuedo elements
-      // var style = `
-      //   .card:hover:before { ${grad_pos} }  /* gradient */
-      //   .card:hover:after { ${sprk_pos} ${opc} }   /* sparkles */ 
-      // `
-      //   // set / apply css class and style
-      //   // $cards.removeClass("active");
-      //   $card.removeClass("animated");
-      //   $card.attr( "style", tf );
-      //   $style.html(style);
-      //   if ( e.type === "touchmove" ) {
-      //     return false; 
-      //   }
-        clearTimeout(x);
-    }
-
 
   useEffect(() => {
 
+    isConnected ? console.log(testContract) : console.log("Not connected yet...")
     /*
     
       using 
@@ -189,6 +141,9 @@ function Home() {
         {isConnected ? 70 : 0}
         </h1>
 
+
+        {/* {isConnected ? console.log(testContract) : console.log("Not connected yet...")} */}
+
         {/* {isConnected && (
           <section>
             <ETHBalance />
@@ -197,7 +152,7 @@ function Home() {
           </section>
         )} */}
 
-        <section style={{display:"flex", flexDirection:"row", marginTop:"30px"}}>
+        <section style={{display:"flex", flexDirection:"row", margin:"30px 0px 15px"}}>
           <Button variant="contained" disabled={!isConnected} >Trade</Button>
           <Button variant="contained" disabled={!isConnected} onClick={e => {
                             router.push("/pick-a-card")
@@ -208,10 +163,10 @@ function Home() {
 
       {isConnected && (
       <section className={styles.cards}>
-        <div onMouseMove={MouseMoveCard} className={`${styles.card} ${styles.charizard} ${styles.animated}`}></div>
-        <div onMouseMove={MouseMoveCard} className={`${styles.card} ${styles.pika} ${styles.animated}`}></div>
-        <div onMouseMove={MouseMoveCard} className={`${styles.card} ${styles.eevee} ${styles.animated}`}></div>
-        <div onMouseMove={MouseMoveCard} className={`${styles.card} ${styles.mewtwo} ${styles.animated}`}></div>
+        <div className={`${styles.card} ${styles.charizard} ${styles.animated}`}></div>
+        <div className={`${styles.card} ${styles.pika} ${styles.animated}`}></div>
+        <div className={`${styles.card} ${styles.eevee} ${styles.animated}`}></div>
+        <div className={`${styles.card} ${styles.mewtwo} ${styles.animated}`}></div>
       </section>
       )}
 
