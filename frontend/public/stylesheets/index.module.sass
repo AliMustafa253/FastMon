@@ -1,0 +1,241 @@
+@import compass
+
+$cardwidth: 11rem
+$cardheight: ($cardwidth * 1.4) // poker card dimensions
+$cardtablesurface: 'http://us.cdn1.123rf.com/168nwm/ptahi/ptahi1210/ptahi121000002/15713955-green-baize-seamless-background.jpg'
+$cardfinish: 'http://subtlepatterns.subtlepatterns.netdna-cdn.com/patterns/whitey.png'
+$cardbackface: 'http://www.titanui.com/wp-content/uploads/2013/01/Violet-Classical-Pattern-Background-1.jpg'
+$suitred: #a00
+$suitblack: #222
+$highlightcardcolor: rgba(255,255,200,0.8)
+$jackimage: 'http://placekitten.com/95/175'
+$queenimage: 'http://placekitten.com/95/176'
+$kingimage: 'http://placekitten.com/95/177'
+
+=highlightcard($xmove,$ymove,$glowcolor: $highlightcardcolor)
+  left: $xmove
+  top: $ymove
+  cursor: pointer
+  +box-shadow(inset 0 0 80px rgba(150,100,50,0.3), 0 0 50px $glowcolor)
+
+// ---------------
+
+BODY
+  background-image: url($cardtablesurface)
+  font: 100% 'Arial Narrow'
+
+.header
+  height: 25px
+  background: #222
+  color: #eee
+  text-align: center
+  font: 12px/25px Helvetica, Verdana, Sans-Serif
+  > A
+    color: #999
+  
+#hand
+  @extend %cards
+  $numcards: 4
+  width: 150px
+  height: 225px
+  > LI
+    position: absolute
+    +transition(top 0.5s ease 0.1s, left 0.5s ease 0.2s, transform 0.5s ease 0.2s)
+    $angle: -3deg
+    @for $i from 1 through $numcards
+      &:nth-child(#{$i})
+        +transform(rotate(#{$angle}))
+      $angle: $angle + 3deg
+    &:hover
+      +highlightcard(0,-30px)
+  &:hover > LI
+    $angle: -10deg
+    $position: 0px
+    @for $i from 1 through $numcards
+      &:nth-child(#{$i})
+        +transform(rotate(#{$angle}))
+        left: #{$position}
+      $angle: $angle + 10deg
+      $position: $position + 30px
+      
+#spread
+  @extend %cards
+  $numcards: 13
+  width: 450px
+  height: 250px
+  > LI
+    position: absolute
+    $angle: -40deg
+    $positionX: 0em
+    $positionY: 16px
+    $adjust: 5px
+    +transition(top 0.5s ease 0.1s)
+    @for $i from 1 through $numcards
+      &:nth-child(#{$i})
+        +transform(translate(#{$positionX},#{$positionY}) rotate(#{$angle}))
+      $angle: $angle + 6deg     
+      $positionX: $positionX + 1.6em
+      $positionY: $positionY - $adjust
+      $adjust: $adjust - 1px
+    &:hover
+      +highlightcard(0,-40px)
+      
+#grid
+  @extend %cards
+  width: 800px
+  > LI
+    position: relative
+    float: left
+    margin: 5px -46px 5px 0px
+    +transition(top 0.5s ease 0.1s, left 0.5s ease 0.1s)
+    &:hover
+      +highlightcard(-40px,-10px)
+
+// ---------------       
+      
+%clearfix
+  zoom: 1
+  &:before, &:after
+    content: ""
+    display: table
+  &:after
+    clear: both
+
+%cardtablemarkings
+  border: 7px solid #030
+  +border-radius(20px)
+
+%cards
+  position: relative
+  margin: 3% auto
+  @extend %cardtablemarkings
+  @extend %clearfix
+  > LI
+    top: 0px
+    left: 0px
+    list-style: none
+    width: $cardwidth
+    height: $cardheight
+    background-color: #fff
+    background-image: url($cardfinish)
+    +border-radius(15px)
+    +box-shadow(inset 0 0 80px rgba(150,100,50,0.5), 0 0 3px rgba(150,100,50,1))
+    +transform-style(preserve-3d)
+    +backface-visibility(hidden)
+    +perspective(1000)
+    +transform(translateZ(0deg),rotate(0deg))
+    &[data-value]
+      @extend %cardface
+    &:not([data-value])
+      @extend %cardback
+
+%cardface
+  &[data-value*='♣'], &[data-value*='♠']
+    color: $suitblack
+  &[data-value*='♦'], &[data-value*='♥'] 
+    color: $suitred
+  &:before, &:after
+    text-align: center
+    outline: 1px dashed #999
+    content: attr(data-value)
+    width: 1em
+    position: absolute
+    font-size: 1.8em
+    line-height: 0.75em  
+  &:after
+    right: 0
+    bottom: 4%
+    +transform(rotate(180deg))
+    outline: 1px dashed red
+  > P
+    outline: 1px solid red
+    display: block
+    margin: 0 auto
+    width: 7rem
+    height: 100%
+    font-size: 4.5rem
+    &:after
+      content: attr(data-suit)
+      +transform(rotate(180deg))
+    > SPAN:first-child
+      display: none
+  $Hleft: 0px
+  $Hright: 4.6rem
+  $Hcenter: 33px
+  $Vcenter: 80px
+  $exactcenter: 35px 80px
+  $edge: 0px
+  $Vuppermiddle: 200px
+  $Vhighmiddle: 70px
+  $Vtopmiddle: 15px
+  $Vmiddle: 68px
+  $blur: 0px
+  &[data-value^='A'] > P
+    width: 0.5em
+    text-align: center
+    &:after
+      content: ''
+  &[data-value='A ♠'] > P
+    font-size: 10em
+    +text-shadow(-1px -1px 0 #fff,1px -1px 0 #fff,-1px 1px 0 #fff,1px 1px 0 #fff,0 -3px 0 #000,-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000,2px 2px 0 #000)
+  &[data-value^='2'] > P
+    width: 0.5em
+    text-align: center
+    &:after
+      
+  &[data-value^='3'] > P
+    text-align: center
+    &:before
+      transform: rotate(180deg)
+      +text-shadow(0px $Vmiddle $blur)
+  &[data-value^='4'] > P
+    +text-shadow($Hright $edge $blur)
+    &:before
+      +text-shadow(-$Hright $edge $blur orange)
+  &[data-value^='5'] > P
+    +text-shadow($Hright $edge $blur, $exactcenter $blur)
+    &:before
+      +text-shadow(-$Hright $edge $blur)
+  &[data-value^='6'] > P
+    +text-shadow($Hright $edge $blur, $Hright $Vmiddle $blur, $Hleft $Vmiddle $blur)
+    &:before
+      +text-shadow(-$Hright $edge $blur)
+  &[data-value^='7'] > P
+    +text-shadow($Hright $edge $blur, $Hright $Vmiddle $blur, $Hleft $Vmiddle $blur, $Hcenter $Vuppermiddle $blur)
+    &:before
+      +text-shadow(-$Hright $edge $blur)
+  &[data-value^='8'] > P
+    +text-shadow($Hright $edge $blur, $Hright $Vmiddle $blur, $Hleft $Vmiddle $blur, $Hcenter $Vuppermiddle $blur)
+    &:before
+      +text-shadow(-$Hright $edge $blur, -$Hcenter $Vuppermiddle $blur)
+  &[data-value^='9'] > P
+    +text-shadow($Hright $edge $blur, $Hright $Vhighmiddle $blur, $Hleft $Vhighmiddle $blur, $Hcenter $Vtopmiddle $blur)
+    &:before
+      +text-shadow(-$Hright $edge $blur, $Hleft $Vhighmiddle $blur, -$Hright $Vhighmiddle $blur)
+  &[data-value^='10'] > P
+    +text-shadow($Hright $edge $blur, $Hright $Vhighmiddle $blur, $Hleft $Vhighmiddle $blur, $Hcenter $Vtopmiddle $blur)
+    &:before
+      +text-shadow(-$Hright $edge $blur, $Hleft $Vhighmiddle $blur, -$Hright $Vhighmiddle $blur, -$Hcenter $Vtopmiddle $blur)
+  &[data-value^='J'] > P,
+  &[data-value^='Q'] > P,
+  &[data-value^='K'] > P
+    width: 98%
+    height: 98%
+    margin: auto
+    color: transparent
+    border: 1px solid $suitblack
+  &[data-value^='J'] > P
+    background-image: url($jackimage)
+  &[data-value^='Q'] > P
+    background-image: url($queenimage)
+  &[data-value^='K'] > P
+    background-image: url($kingimage)
+    
+%cardback
+  > P
+    width: 90%
+    height: 92%
+    margin: 5% auto 0
+    background-image: url($cardbackface)
+    background-position: center center
+    +border-radius(7px)
