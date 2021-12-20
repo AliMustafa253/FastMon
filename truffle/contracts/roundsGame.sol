@@ -55,15 +55,15 @@ contract roundsGame is initializeGame {
         return (cardToOwner[_card]);
     }
 
-    function retplayerTurnsDone() public view returns (uint256) {
+    function retPlayerTurnsDone() public view returns (uint256) {
         return playerTurnsDone;
     }
 
-    function retcurrentRound() public view returns (uint256) {
+    function retCurrentRound() public view returns (uint256) {
         return currentRound;
     }
 
-    function retplayerCards() public view returns (uint256[] memory) {
+    function retPlayerCards() public view returns (uint256[] memory) {
         uint256[] memory result = new uint256[](retPlayer().cardsOwned);
         uint256 counter = 0;
         for (uint256 i = 0; i < cards.length; i++) {
@@ -77,9 +77,9 @@ contract roundsGame is initializeGame {
 
     //Calculates total costs and points according to cards
 
-    function retplayerScore() public view returns (uint256) {
+    function retPlayerScore() public view returns (uint256) {
         uint256[] memory playerCards = new uint256[](retPlayer().cardsOwned);
-        playerCards = retplayerCards();
+        playerCards = retPlayerCards();
         uint256 totalScore = 0;
         for (uint256 i = 0; i < playerCards.length; i++) {
             if (playerCards[i] < 1000) {
@@ -109,7 +109,7 @@ contract roundsGame is initializeGame {
 
     //-------ADVANCE ROUND OR END GAME IF SCORE REACHED--------
     function advancePlay() internal gameStarted {
-        if (retplayerScore() >= 100) {} //NO CONDITION SET RN
+        if (retPlayerScore() >= 100) {} //NO CONDITION SET RN
         if (ownerToPlayer[msg.sender].balance <= 0) {
             totalPlayers -= 1;
             playerTurnsDone -= 1;
