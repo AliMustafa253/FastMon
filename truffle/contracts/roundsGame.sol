@@ -5,7 +5,7 @@ import "./initializeGame.sol";
 /*==================================================================
 Contains
 -Majority of the Modifiers
--Return Options
+-Return Options 
 -Round Change
 -Random Card
 -Score Calculation
@@ -21,6 +21,8 @@ contract roundsGame is initializeGame {
     uint256 public playerTurnsDone = 0; //players who have finished their turn
     uint16 public randomCost = 10;
     address public playerWon = address(0);
+
+    uint256 currentTrades = 0; //current amount of trades pending
 
     //--------------------Modifier----------------------
 
@@ -89,7 +91,7 @@ contract roundsGame is initializeGame {
             } else if (playerCards[i] < 9000) {
                 totalScore += 15;
             } else {
-                totalScore += 20;
+                totalScore += 30;
             }
         }
         return totalScore;
@@ -107,7 +109,7 @@ contract roundsGame is initializeGame {
 
     //-------ADVANCE ROUND OR END GAME IF SCORE REACHED--------
     function advancePlay() internal gameStarted {
-        if (retplayerScore() >= 100) {}
+        if (retplayerScore() >= 100) {} //NO CONDITION SET RN
         if (ownerToPlayer[msg.sender].balance <= 0) {
             totalPlayers -= 1;
             playerTurnsDone -= 1;
