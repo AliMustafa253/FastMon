@@ -1,10 +1,10 @@
 import { useWeb3React } from "@web3-react/core";
 import Head from "next/head";
 import Link from "next/link";
-import Account from "../components/Account";
-import ETHBalance from "../components/ETHBalance";
-import TokenBalance from "../components/TokenBalance";
-import useEagerConnect from "../hooks/useEagerConnect";
+// import Account from "../components/Account";
+// import ETHBalance from "../components/ETHBalance";
+// import TokenBalance from "../components/TokenBalance";
+// import useEagerConnect from "../hooks/useEagerConnect";
 
 const DAI_TOKEN_ADDRESS = "0x6b175474e89094c44da98b954eedeac495271d0f";
 
@@ -15,7 +15,7 @@ import { useRouter } from 'next/router'
 import React, {useState, useEffect} from 'react';
 import $ from 'jquery';
 
-import styles from "../styles/index.module.scss"
+import styles from "../../styles/index.module.scss"
 
 
 function Home() {
@@ -23,9 +23,34 @@ function Home() {
 
   const { account, library } = useWeb3React();
 
-  const triedToEagerConnect = useEagerConnect();
+//   const triedToEagerConnect = useEagerConnect();
 
-  const isConnected = typeof account === "string" && !!library;
+//   const isConnected = typeof account === "string" && !!library;
+
+const [mouse_move_card, setMouseMoveCard] = useState(false);
+
+
+const [card_transform, setCardTransform] = useState('none');
+const [card_before_background_position, setCardBeforeBackgroundPosition] = useState('0 0');
+const [card_after_background_position, setCardAfterBackgroundPosition] = useState('0 0');
+const [card_after_opacity, setCardAfterOpacity] = useState('0');
+
+
+
+  var hover_card_styles = {
+    // card: {
+        transform: card_transform,
+        '&:hover:before': {
+             backgroundPosition: card_before_background_position,
+        },    
+        '&:hover:after': {
+            backgroundPosition: card_after_background_position,
+            opacity: card_after_opacity
+       },               
+    // },
+  }
+
+
 
   var x;
   // var $cards = $(".card");
@@ -35,18 +60,36 @@ function Home() {
   const MouseMoveCard = (e) => {
       var cardElement = e.target
 
+      e = e || window.event;
+
+      var target = e.target || e.srcElement,
+          rect = target.getBoundingClientRect(),
+          offsetX = e.clientX - rect.left,
+          offsetY = e.clientY - rect.top;
+
+
       // normalise touch/mouse
-      var pos = [e.offsetX,e.offsetY];
+      var pos = [offsetX,offsetY];
       e.preventDefault();
       if ( e.type === "touchmove" ) {
-        pos = [ e.touches[0].clientX, e.touches[0].clientY ];
-      }
-      var $card = $(cardElement);
+          pos = [ e.touches[0].clientX, e.touches[0].clientY ];
+        }
+
+        // ----------- Print debugging
+        // console.log( "pos is", pos)
+        // ----------- Print debugging
+
+        var $card = $(cardElement);
       // math for mouse position
       var l = pos[0];
       var t = pos[1];
       var h = $card.height();
       var w = $card.width();
+
+        // ----------- Print debugging
+        //   console.log( "card height and width is: ", h, ", ", w)
+        // ----------- Print debugging
+
       var px = Math.abs(Math.floor(100 / w * l)-100);
       var py = Math.abs(Math.floor(100 / h * t)-100);
       var pa = (50-px)+(50-py);
@@ -59,30 +102,39 @@ function Home() {
       var ty = ((tp - 50)/2) * -1;
       var tx = ((lp - 50)/1.5) * .5;
       // css to apply for active card
-      var grad_pos = `background-position: ${lp}% ${tp}%;`
-      var sprk_pos = `background-position: ${px_spark}% ${py_spark}%;`
-      var opc = `opacity: ${p_opc/100};`
-      var tf = `transform: rotateX(${ty}deg) rotateY(${tx}deg)`
+      var grad_pos = `${lp}% ${tp}%;`
+      var sprk_pos = `${px_spark}% ${py_spark}%;`
+      var opc = `${p_opc/100}`
+      var tf = `rotateX(${ty}deg) rotateY(${tx}deg)`
       
-      cardElement.hover.before["background-position"] = `${lp}% ${tp}%;`
+      setCardBeforeBackgroundPosition(grad_pos)
+      setCardAfterBackgroundPosition(sprk_pos)
+      setCardAfterOpacity(opc)
+      setCardTransform(tf)
+      
+      setMouseMoveCard(true)
 
+        // ----------- Print debugging
+        // console.log("mouse_move_card is", mouse_move_card)
+    //   console.log("Custom styles are: ", hover_card_styles)
+        // ----------- Print debugging
       
-      // need to use a <style> tag for psuedo elements
-      // var style = `
-      //   .card:hover:before { ${grad_pos} }  /* gradient */
-      //   .card:hover:after { ${sprk_pos} ${opc} }   /* sparkles */ 
-      // `
-      //   // set / apply css class and style
-      //   // $cards.removeClass("active");
-      //   $card.removeClass("animated");
-      //   $card.attr( "style", tf );
-      //   $style.html(style);
-      //   if ( e.type === "touchmove" ) {
-      //     return false; 
-      //   }
+        if ( e.type === "touchmove" ) {
+          return false; 
+        }
         clearTimeout(x);
     }
 
+    const MouseOutCard = (e) => {
+        // remove css, apply custom animation on end
+        var $card = $(this);
+        setCardTransform("");
+        $card.removeAttr("style");
+        x = setTimeout(function() {
+            // $card.addClass("animated");
+            setMouseMoveCard(false)
+        },2500);
+    }
 
   useEffect(() => {
 
@@ -135,7 +187,7 @@ function Home() {
         `
         // set / apply css class and style
         // $cards.removeClass("active");
-        $card.removeClass("animated");
+        // $card.removeClass("animated");
         $card.attr( "style", tf );
         $style.html(style);
         if ( e.type === "touchmove" ) {
@@ -182,40 +234,20 @@ function Home() {
       textAlign: "center",
       width: "100%",
       }}>
-        <p>
-        Your score is
-        </p>
-        <h1 style={{fontSize: "80px", padding:0, margin:-10}}>
-        {isConnected ? 70 : 0}
-        </h1>
 
-        {/* {isConnected && (
-          <section>
-            <ETHBalance />
-
-            <TokenBalance tokenAddress={DAI_TOKEN_ADDRESS} symbol="DAI" />
-          </section>
-        )} */}
-
-        <section style={{display:"flex", flexDirection:"row", marginTop:"30px"}}>
-          <Button variant="contained" disabled={!isConnected} >Trade</Button>
-          <Button variant="contained" disabled={!isConnected} onClick={e => {
-                            router.push("/pick-a-card")
-                        }} style={{marginLeft:"20px"}}>Buy</Button>
-        </section>
-      </main>
-
-
-      {isConnected && (
       <section className={styles.cards}>
-        <div onMouseMove={MouseMoveCard} className={`${styles.card} ${styles.charizard} ${styles.animated}`}></div>
-        <div onMouseMove={MouseMoveCard} className={`${styles.card} ${styles.pika} ${styles.animated}`}></div>
-        <div onMouseMove={MouseMoveCard} className={`${styles.card} ${styles.eevee} ${styles.animated}`}></div>
-        <div onMouseMove={MouseMoveCard} className={`${styles.card} ${styles.mewtwo} ${styles.animated}`}></div>
+        <div 
+        onMouseMove={MouseMoveCard} 
+        onTouchMove={MouseMoveCard}
+
+        onMouseOut={MouseOutCard}
+
+        className={`${styles.card} ${styles.charizard} ` + (mouse_move_card ? ``: `${styles.animated}`)}
+            style={mouse_move_card ? hover_card_styles : {}}    
+        ></div>
       </section>
-      )}
 
-
+      </main>
 
 
       <style jsx>{`
