@@ -20,7 +20,7 @@ const Navbar = () => {
   const router = useRouter()
 
     return (
-        <nav style={{padding:"30px 40px", width:"100%", display: "flex", flexDirection:"row", justifyContent: "space-between", alignItems:"center"}}>
+        <nav style={{padding:"30px 40px 14px 40px", width:"100%", display: "flex", flexDirection:"row", justifyContent: "space-between", alignItems:"center"}}>
             { 
             router.asPath == "/" ?
                 <h5 style={{textTransform: "uppercase"}}>Reach 100 points to win</h5>
@@ -28,13 +28,31 @@ const Navbar = () => {
                 <FontAwesomeIcon icon={faArrowLeft} onClick={() => router.back()} style={{
                 height:20,
                 cursor: "pointer",
-                color: "white",
+                color: router.asPath == "/pick-a-card" ? "white" : "black",
                 margin: "22.1776 0"
                 }}>
                 {/* <a>next-web3-boilerplate</a> */}
                 </FontAwesomeIcon>
             }
-            <Account triedToEagerConnect={triedToEagerConnect} />
+            <div style={{display: "flex", flexDirection: "column", justifyContent: "flex-end", alignItems: "flex-end"}}>
+                <Account triedToEagerConnect={triedToEagerConnect} style={{
+                    color: router.asPath == "/pick-a-card" ? "white" : "black",
+                }}/>
+                <div style={{display: "flex", flexDirection: "row", marginTop:"9px"}}>
+                    <img src="../static/images/pokecoin.png" style={{
+                        imageRendering: "pixelated",
+                        height: "20px",
+                        width: "20px",
+                        }} />
+                    <p style={{fontFamily: "Courier New", 
+                    fontSize: "20px", 
+                    margin: "0px 10px", 
+                    padding: "0px", 
+                    color: "#EEBC1D",
+                    textStroke: "1px black",
+                }}>100</p>
+                </div>
+            </div>
         </nav>
     )
 }

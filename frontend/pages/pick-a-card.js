@@ -62,7 +62,7 @@ function PickACard() {
 
     const [clicked, setClicked] = useState(styles.down);
     const ChooseACard = (e) => {
-      var cardElement = e.target
+    var cardElement = e.target
       console.log(cardElement.classList)
     //   clicked == 'down' ? setClicked('') : setClicked('base-state click-state');
 
@@ -70,7 +70,7 @@ function PickACard() {
         play(e);
         setClicked(styles.opened);
         cardElement.style["background-image"] = 'url("'+randomize()+'")';	
-    }
+      }
       else if (clicked == styles.opened) {
         setClicked(styles['is-removed']);
       }
