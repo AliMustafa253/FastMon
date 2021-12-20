@@ -4,6 +4,7 @@ import React, {useState, useEffect} from 'react';
 
 import Account from "../components/Account";
 import useEagerConnect from "../hooks/useEagerConnect";
+import { useWeb3React } from "@web3-react/core";
 
 
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
@@ -11,13 +12,28 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useRouter } from 'next/router'
 
 
+
 import Button from '@mui/material/Button';
+
+
+
+// for contract calls with Redux
+import {useDispatch, useSelector} from "react-redux";
+import {__create_player, __get_player_data} from "../store/actions";
 
 
 const Navbar = () => {
     const triedToEagerConnect = useEagerConnect();
+
+    const { account, library } = useWeb3React();
+
     const isConnected = typeof account === "string" && !!library;
   const router = useRouter()
+
+
+
+  const player = useSelector(redux => redux.player);
+
 
     return (
         <nav style={{padding:"30px 40px 14px 40px", width:"100%", display: "flex", flexDirection:"row", justifyContent: "space-between", alignItems:"center"}}>
@@ -34,11 +50,25 @@ const Navbar = () => {
                 {/* <a>next-web3-boilerplate</a> */}
                 </FontAwesomeIcon>
             }
+
+
+            { player ? <p style={{
+                marginLeft:-45,
+                opacity: 0.6,
+                textAlign:"center",
+                color: router.asPath == "/pick-a-card" ? "white" : "black",
+            }}> Round: {player.round} <br/> 
+                            Your player#: {player.playerNumber}
+                        </p> : <></>}
+
+
+
             <div style={{display: "flex", flexDirection: "column", justifyContent: "flex-end", alignItems: "flex-end"}}>
                 <Account triedToEagerConnect={triedToEagerConnect} style={{
                     color: router.asPath == "/pick-a-card" ? "white" : "black",
                 }}/>
-                <div style={{display: "flex", flexDirection: "row", marginTop:"9px"}}>
+                {
+                player ? <div style={{display: "flex", flexDirection: "row", marginTop:"9px"}}>
                     <img src="../static/images/pokecoin.png" style={{
                         imageRendering: "pixelated",
                         height: "20px",
@@ -50,8 +80,11 @@ const Navbar = () => {
                     padding: "0px", 
                     color: "#EEBC1D",
                     textStroke: "1px black",
-                }}>100</p>
+                }}>{player.balance}</p>
                 </div>
+                :
+                <></>
+                }
             </div>
         </nav>
     )

@@ -30,12 +30,14 @@ const Account = ({ triedToEagerConnect }: AccountProps) => {
     if (active || error) {
       setConnecting(false);
       stopOnboarding();
+      console.log("Account is", account)
     }
   }, [active, error, stopOnboarding]);
 
   const ENSName = useENSName(account);
 
   if (error) {
+    console.log("ERROR in getting account: ", error);
     return null;
   }
 

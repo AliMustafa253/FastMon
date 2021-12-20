@@ -20,6 +20,7 @@ import { useRouter } from 'next/router'
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
+import {numberToCard, lookupCard} from "./index.tsx"
 
 // for sound
 import useSound from 'use-sound';
@@ -28,8 +29,19 @@ import useSound from 'use-sound';
 
 import useAudio from "../hooks/useAudio"
 
+
+// for contract calls with Redux
+import {useDispatch, useSelector} from "react-redux";
+import {__pick_a_card, __get_player_data} from "../store/actions";
+
+
+// let's try using a Contract...
+import useProjectGameContract from "../hooks/useProjectGameContract"
+
+
 function PickACard() {
   const router = useRouter()
+  const dispatch = useDispatch();
 
     const { account, library } = useWeb3React();
     
@@ -38,43 +50,39 @@ function PickACard() {
     const isConnected = typeof account === "string" && !!library;
 
 
+
+    const testContract = useProjectGameContract();
+
+
+    const new_card = useSelector(redux => redux.new_card);
+
+
+
   const filePath = '../static/sounds/capture.mp3';
   const [play] = useSound(filePath);
 
-    let suits = [
-      // Pikachu
-      "https://m.media-amazon.com/images/I/81TqgoiOIqL._AC_SY679_.jpg", 
-      // Charizard
-      'https://den-cards.pokellector.com/197/Charizard.EVO.11.13280.png', 
-      // MewTwo
-      'https://static.wikia.nocookie.net/pokemontcg/images/8/84/MewtwoBaseSet10.jpg', 
-      // Bulbasaur
-      'https://den-cards.pokellector.com/119/Bulbasaur.BS.44.png'
-    ];
-    let suitType;
-
     const randomize = () => {
-        suitType = Math.floor(Math.random() * 4);
-        let suitResult = suits[suitType];
-        console.log(suitResult);
-        return suitResult;
+      return lookupCard(new_card)
     }
 
     const [clicked, setClicked] = useState(styles.down);
-    const ChooseACard = (e) => {
-    var cardElement = e.target
-      console.log(cardElement.classList)
-    //   clicked == 'down' ? setClicked('') : setClicked('base-state click-state');
 
-      if (clicked == styles.down) {
-        play(e);
-        setClicked(styles.opened);
-        cardElement.style["background-image"] = 'url("'+randomize()+'")';	
-      }
-      else if (clicked == styles.opened) {
-        setClicked(styles['is-removed']);
-      }
-      randomize();
+    const ChooseACard = (e) => {
+      dispatch(__pick_a_card(testContract)).then( ()=> {}).finally( () => {
+        var cardElement = e.target
+        console.log(cardElement.classList)
+      //   clicked == 'down' ? setClicked('') : setClicked('base-state click-state');
+  
+        if (clicked == styles.down) {
+          play(e);
+          setClicked(styles.opened);
+          cardElement.style["background-image"] = 'url("'+randomize()+'")';	
+        }
+        else if (clicked == styles.opened) {
+          setClicked(styles['is-removed']);
+        }
+        randomize();
+      })
     }
 
   let cardAmount = 10;
