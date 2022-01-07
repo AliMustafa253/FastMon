@@ -23,5 +23,21 @@ npm next dev
 ```
 
 ## Game playing:
+
 After the contract has been deployed to Ganache, any user can open the app and “Connect their
 Metamask account”.
+
+![image](https://user-images.githubusercontent.com/91639328/148579122-1a73b16c-e764-4146-a42f-9850abba908e.png)
+
+A player can Generate a New Card to advance the turn. This will be added to their
+cards - but it costs them tokens.  
+
+
+![image](https://user-images.githubusercontent.com/91639328/148579442-97a4f271-ef7d-4df2-99b4-6d0742f49484.png)
+
+You can select a random card upon selecting the buy option using the interface below.
+
+![image](https://user-images.githubusercontent.com/91639328/148579575-79b4896f-f494-4fad-9951-bceb25b8587c.png)
+
+
+
