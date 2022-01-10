@@ -12,6 +12,7 @@ Ensure you have the following downloaded
 
 * NPM
 * Yarn
+* Next
 
 ## How to Install:
 
