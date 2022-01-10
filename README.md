@@ -7,7 +7,14 @@ Our frontend is built on Nextjs, a React Framework. It utilizes state management
 Redux-Thunk, and uses a solid Provider pattern to utilize Web3 in the entire app.
 We use Material UI for good design.
 
+## Pre-requisite:
+Ensure you have the following downloaded
+
+* NPM
+* Yarn
+
 ## How to Install:
+
 - First install dependencies. Run the following in the **frontend** folder
 ```
 npm install
