@@ -13,6 +13,11 @@ Ensure you have the following downloaded
 * NPM
 * Yarn
 * Next
+* react
+
+```
+npm install next react react-dom
+```
 
 ## How to Install:
 
