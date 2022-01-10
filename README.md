@@ -32,7 +32,7 @@ address of Project Game (which you might have deployed with truffle migrate in t
 truffle folder)
 - Run the server. Run  the following in the **frontend** folder
 ```
-npm next dev
+npx next dev
 ```
 
 ## Game playing:
